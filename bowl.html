@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bowl Shuffling Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5dc;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .bowl {
+            width: 100px;
+            height: 100px;
+            background-color: brown;
+            border-radius: 50%;
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .hidden-img {
+            display: none;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+        }
+        #start-btn, #message {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        #confetti-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Find the Hidden Cake!</h1>
+    <button id="start-btn">Start</button>
+    <div class="container">
+        <div class="bowl" data-index="0"><img class="hidden-img" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Strawberry_Cream_Cake_%282%29.jpg"></div>
+        <div class="bowl" data-index="1"><img class="hidden-img" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Strawberry_Cream_Cake_%282%29.jpg"></div>
+        <div class="bowl" data-index="2"><img class="hidden-img" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Strawberry_Cream_Cake_%282%29.jpg"></div>
+    </div>
+    <p id="message"></p>
+    <div id="confetti-container"></div>
+    <img id="cat-gif" src="https://media.giphy.com/media/JltOMwYmi0VrO/giphy.gif" style="display: none; width: 150px;">
+    
+    <script>
+        let bowls = document.querySelectorAll('.bowl');
+        let startBtn = document.getElementById('start-btn');
+        let message = document.getElementById('message');
+        let confettiContainer = document.getElementById('confetti-container');
+        let catGif = document.getElementById('cat-gif');
+        let hiddenIndex = 0;
+        
+        startBtn.addEventListener('click', () => {
+            message.textContent = "Shuffling...";
+            hiddenIndex = Math.floor(Math.random() * 3);
+            document.querySelectorAll('.hidden-img').forEach(img => img.style.display = 'none');
+            let shuffleTimes = 10;
+            let count = 0;
+
+            let shuffleInterval = setInterval(() => {
+                let indices = [0, 1, 2];
+                indices.sort(() => Math.random() - 0.5);
+                
+                bowls.forEach((bowl, i) => {
+                    bowl.dataset.index = indices[i];
+                });
+
+                count++;
+                if (count >= shuffleTimes) {
+                    clearInterval(shuffleInterval);
+                    message.textContent = "Pick the correct bowl!";
+                    document.querySelectorAll('.bowl')[hiddenIndex].querySelector('.hidden-img').style.display = 'block';
+                }
+            }, 500);
+        });
+
+        bowls.forEach(bowl => {
+            bowl.addEventListener('click', () => {
+                if (bowl.dataset.index == hiddenIndex) {
+                    message.textContent = "HAPPY 24 DAYS BEFORE YOUR BDAY CHAPATIII 🎉";
+                    confettiContainer.style.display = "block";
+                    catGif.style.display = "block";
+                    startConfetti();
+                } else {
+                    message.textContent = "Oops! Try again.";
+                }
+            });
+        });
+
+        function startConfetti() {
+            for (let i = 0; i < 100; i++) {
+                let confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.left = `${Math.random() * window.innerWidth}px`;
+                confetti.style.top = `${Math.random() * window.innerHeight}px`;
+                confetti.style.opacity = Math.random();
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confettiContainer.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+    </script>
+</body>
+</html>
